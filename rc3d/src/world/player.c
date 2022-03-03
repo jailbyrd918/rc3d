@@ -80,7 +80,7 @@ bool player_render
                 (player.pos_y * DISPLAY_2D_SCALE) + (g_screenbuf_height / 2) - ((map->h / 2) * DISPLAY_2D_SCALE),
                 (endx * DISPLAY_2D_SCALE) + (g_screenbuf_width / 2) - ((map->w / 2) * DISPLAY_2D_SCALE),
                 (endy * DISPLAY_2D_SCALE) + (g_screenbuf_height / 2) - ((map->h / 2) * DISPLAY_2D_SCALE),
-                GET_OPAQUE_COLOR_HEX(0x00, 0x00, 0xff)
+                GET_OPAQUE_COLOR_HEX(0x00, 0x8c, 0xff)
         );
 
 
@@ -93,7 +93,7 @@ bool player_render
                 ((player.pos_y - (int)floorf((float)playersize / 2.f)) * DISPLAY_2D_SCALE) + (g_screenbuf_height / 2) - ((map->h / 2) * DISPLAY_2D_SCALE),
                 playersize * DISPLAY_2D_SCALE,
                 playersize * DISPLAY_2D_SCALE,
-                GET_OPAQUE_COLOR_HEX(0x00, 0xff, 0x00)
+                GET_OPAQUE_COLOR_HEX(0x00, 0x00, 0xff)
         );
 
         return true;

@@ -26,7 +26,6 @@ struct {
         int     yaw_dir;
         int     yaw_speed;
         float   fov;
-
 }
 player;
 

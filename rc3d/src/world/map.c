@@ -346,13 +346,14 @@ bool map_render
                         int r = map->tiles[(map->cols * row) + col].tile_height == 0 ? 0xff : 0x00;
                         int g = map->tiles[(map->cols * row) + col].tile_height == 0 ? 0xff : 0x00;
                         int b = map->tiles[(map->cols * row) + col].tile_height == 0 ? 0xff : 0x00;
+                        int a = (int)(((float)map->tiles[(map->cols * row) + col].tile_height / 0xff) * 0xff);
 
                         display_draw_rect_f(
                                 (tilex * DISPLAY_2D_SCALE) + (g_screenbuf_width / 2) - ((map->w / 2) * DISPLAY_2D_SCALE),
                                 (tiley * DISPLAY_2D_SCALE) + (g_screenbuf_height / 2) - ((map->h / 2) * DISPLAY_2D_SCALE),
                                 TILE_SIZE * DISPLAY_2D_SCALE,
                                 TILE_SIZE * DISPLAY_2D_SCALE,
-                                GET_OPAQUE_COLOR_HEX(r, g, b)
+                                GET_COLOR_HEX(r, g, b, a)
                         );
                 }
         }

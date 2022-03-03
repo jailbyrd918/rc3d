@@ -53,6 +53,9 @@ bool display_init
         screenbuf_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, scrbuf_w, scrbuf_h);
         if (!screenbuf_texture) return false;
 
+        // enable alpha blending
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
         return true;
 }
 

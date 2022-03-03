@@ -5,9 +5,11 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "utils/maths.h"
 #include "graphics/display.h"
 #include "world/map.h"
 #include "world/player.h"
+#include "world/ray.h"
 
 #include "engine.h"
 
@@ -126,6 +128,7 @@ static void _engine_update
         _update_delta_time();
 
         player_update(curr_map_id, delta_time);
+        ray_cast_all(curr_map_id);
 }
 
 static void _engine_render
@@ -136,6 +139,7 @@ static void _engine_render
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
                         map_render(curr_map_id);
+                        ray_render_all(curr_map_id);
                         player_render(curr_map_id);
                         break;
 
@@ -175,6 +179,8 @@ void engine_init
 
         player_init(400, 600, 5, 120, 60);
 
+        ray_init_list();
+
 }
 
 void engine_run
@@ -193,6 +199,7 @@ void engine_quit
 {
         // destroy engine components and deallocate resources
         map_free_list();
+        ray_free_list();
         display_free();
 
         // unload IMG_PNG libraries and cleans up initialized SDL core subsystems 
