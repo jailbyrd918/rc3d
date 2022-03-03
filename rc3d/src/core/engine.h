@@ -14,7 +14,7 @@
 // >> initializes engine components/subsystems, allocates resources
 // >> ensures that the engine is in ready state to run
 void engine_init
-(const char *resrc_dir);
+(void);
 
 // >> runs the engine through engine loop
 // >> processes input events, updates engine logic, produces output like graphics, audio, etc. 

@@ -9,7 +9,7 @@
 int main
 (int argc, int argv) 
 {
-        engine_init("./resrc/");
+        engine_init();
         engine_run();
         engine_quit();
 

@@ -1,0 +1,11 @@
+/ floor textures
+g       grass           grass.png
+w       water           water.png               
+r       road            rocky_road.png
+
+/ wall textures
+b       brick           brick_wall.png
+p       pattern         vinelike_pattern.png
+
+/ parallax sky texture
+sky     night_city_sky.png

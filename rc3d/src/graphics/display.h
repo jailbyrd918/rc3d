@@ -25,7 +25,7 @@ enum {
 }
 display_mode;
 
-#define DISPLAY_2D_SCALE        (.25f)
+#define DISPLAY_2D_SCALE        (.1f)
 
 
 #define GET_COLOR_HEX(r, g, b, a)	\

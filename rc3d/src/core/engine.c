@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
 
 #include "graphics/display.h"
+#include "world/map.h"
 
 #include "engine.h"
 
@@ -19,7 +21,10 @@ static  float   delta_time = 0.f;
 static  bool    engine_loop = false;
 
 // >> resources (textures, maps, etc.) directory
-static  char    *resrc_dir = "";
+char            *resrc_dir = "";
+
+// >> current map id
+char            *curr_map_id = "";
 
 
 static void _update_delta_time
@@ -74,6 +79,7 @@ static void _engine_render
 
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
+                        map_render(curr_map_id);
                         break;
 
                 case DISPLAY_MODE_3D:
@@ -89,7 +95,7 @@ static void _engine_render
 
 
 void engine_init
-(const char *resrc_dir)
+(void)
 {
         // >> true: engine is good to run
         // >> false: engine failed/bad to run -> would crash if proceeds
@@ -102,6 +108,11 @@ void engine_init
         engine_loop = (engineok) ? true : false;
 
 
+        // -- allocate resources and initialize engine components -- //
+
+        map_init_list();
+        map_add_to_list("demo", "./resrc/maps/demo.txt");
+        curr_map_id = "demo";
 
 }
 
@@ -120,6 +131,7 @@ void engine_quit
 (void)
 {
         // destroy engine components and deallocate resources
+        map_free_list();
         display_free();
 
         // unload IMG_PNG libraries and cleans up initialized SDL core subsystems 
