@@ -73,19 +73,19 @@ bool map_add_to_list
         else {
                 while (mapbuf[curridx] != '\0') {
                         if (isdigit(mapbuf[curridx])) {
-                                // extract map cols in string format
+                                // extract map rows in string format
                                 char valstr[64];
                                 size_t valstritr = 0;
                                 while (mapbuf[curridx] != ' ' && mapbuf[curridx] != '\n')
                                         valstr[valstritr++] = mapbuf[curridx++];
                                 valstr[valstritr] = '\0';
 
-                                // convert map cols string to integer value
-                                int mapcols = -1;
-                                sscanf(valstr, "%d", &mapcols);
+                                // convert map rows string to integer value
+                                int maprows = -1;
+                                sscanf(valstr, "%d", &maprows);
 
-                                newmap->cols = mapcols;
-                                newmap->w = mapcols * TILE_SIZE;
+                                newmap->rows = maprows;
+                                newmap->w = maprows * TILE_SIZE;
                                 break;
                         }
 
@@ -111,11 +111,11 @@ bool map_add_to_list
                                 valstr[valstritr] = '\0';
 
                                 // convert map cols string to integer value
-                                int maprows = -1;
-                                sscanf(valstr, "%d", &maprows);
+                                int mapcols = -1;
+                                sscanf(valstr, "%d", &mapcols);
 
-                                newmap->rows = maprows;
-                                newmap->h = maprows * TILE_SIZE;
+                                newmap->cols = mapcols;
+                                newmap->h = mapcols * TILE_SIZE;
                                 break;
                         }
 
@@ -126,7 +126,7 @@ bool map_add_to_list
 
         // -- allocate tiles array -- /////////////////////
 
-        newmap->tiles = malloc(sizeof(tile_t) * (newmap->cols * newmap->rows));
+        newmap->tiles = malloc(sizeof(tile_t) * (newmap->rows * newmap->cols));
         int numtiles = newmap->rows * newmap->cols;
 
 

@@ -7,6 +7,7 @@
 
 #include "graphics/display.h"
 #include "world/map.h"
+#include "world/player.h"
 
 #include "engine.h"
 
@@ -59,10 +60,64 @@ static void _engine_proc_input
                                         engine_loop = false;
                                         break;
 
+                                case SDLK_m:
+                                        display_toggle_mode();
+                                        break;
+
+                                case SDLK_UP:
+                                        // perform skidding
+                                        if (player.move_dir == -1)
+                                                player.curr_speed = 0;
+
+                                        player.move_dir = 1;
+                                        player.moving = true;
+                                        break;
+
+                                case SDLK_DOWN:
+                                        // perform skidding
+                                        if (player.move_dir == 1)
+                                                player.curr_speed = 0;
+
+                                        player.move_dir = -1;
+                                        player.moving = true;
+                                        break;
+
+                                case SDLK_LEFT:
+                                        player.yaw_dir = -1;
+                                        break;
+
+                                case SDLK_RIGHT:
+                                        player.yaw_dir = 1;
+                                        break;
+
+                                        // used for debug breakpoint at any frame
+                                case SDLK_d: { const char *dbg = "debug"; } break;
+
                                 default:
                                         break;
                         }
-        }   
+                        break;
+
+                case SDL_KEYUP:
+                        switch (event.key.keysym.sym) {
+                                case SDLK_UP:
+                                case SDLK_DOWN:
+                                        player.moving = false;
+                                        break;
+
+                                case SDLK_LEFT:
+                                case SDLK_RIGHT:
+                                        player.yaw_dir = 0;
+                                        break;
+
+                                default:
+                                        break;
+                        }
+                        break;
+
+                default:
+                        break;
+        }
 }
 
 static void _engine_update
@@ -70,6 +125,7 @@ static void _engine_update
 {
         _update_delta_time();
 
+        player_update(curr_map_id, delta_time);
 }
 
 static void _engine_render
@@ -80,6 +136,7 @@ static void _engine_render
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
                         map_render(curr_map_id);
+                        player_render(curr_map_id);
                         break;
 
                 case DISPLAY_MODE_3D:
@@ -113,6 +170,10 @@ void engine_init
         map_init_list();
         map_add_to_list("demo", "./resrc/maps/demo.txt");
         curr_map_id = "demo";
+
+        display_mode = DISPLAY_MODE_3D;
+
+        player_init(400, 600, 5, 120, 60);
 
 }
 
