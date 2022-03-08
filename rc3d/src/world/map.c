@@ -412,4 +412,38 @@ int map_get_tile_height
         return (map->tiles[(map->cols * row) + col].tile_height);
 }
 
+int map_get_tile_index_x
+(const char *map_id, const float x, const float y)
+{
+        map_t *map = map_get_by_id(map_id);
+        if (!map) return -1;
+
+        int col = (int)floorf(x / TILE_SIZE) % map->cols;
+        return col;
+}
+
+int map_get_tile_index_y
+(const char *map_id, const float x, const float y)
+{
+        map_t *map = map_get_by_id(map_id);
+        if (!map) return -1;
+
+        int row = (int)floorf(y / TILE_SIZE) % map->rows;
+        return row;
+}
+
+bool map_same_tile
+(const char *map_id, const float x0, const float y0, const float x1, const float y1)
+{
+        map_t *map = map_get_by_id(map_id);
+        if (!map) return -1;
+
+        int col0 = (int)floorf(x0 / TILE_SIZE) % map->cols;
+        int row0 = (int)floorf(y0 / TILE_SIZE) % map->rows;
+        int col1 = (int)floorf(x1 / TILE_SIZE) % map->cols;
+        int row1 = (int)floorf(y1 / TILE_SIZE) % map->rows;
+
+        return (col0 == col1) && (row0 == row1);
+}
+
 

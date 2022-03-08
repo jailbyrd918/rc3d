@@ -69,5 +69,14 @@ int map_get_floor_tex_id
 int map_get_tile_height
 (const char *map_id, const float x, const float y);
 
+int map_get_tile_index_x
+(const char *map_id, const float x, const float y);
+
+int map_get_tile_index_y
+(const char *map_id, const float x, const float y);
+
+bool map_same_tile
+(const char *map_id, const float x0, const float y0, const float x1, const float y1);
+
 
 #endif

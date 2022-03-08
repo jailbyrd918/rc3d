@@ -25,7 +25,7 @@ void player_init
 
         // -- rotation -- /////////////////////////////////////
 
-        player.yaw = math_angle_from_vec2(0.f, -1.f);
+        player.yaw = math_angle_from_vec2(.5f, 1.f);
         player.yaw_dir = 0;
         player.yaw_speed = (int)DEG_TO_RAD(turn_speed);
         player.fov = DEG_TO_RAD(field_of_view);

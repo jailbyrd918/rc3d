@@ -7,9 +7,11 @@
 
 #include "utils/maths.h"
 #include "graphics/display.h"
+#include "graphics/texture.h"
 #include "world/map.h"
 #include "world/player.h"
 #include "world/ray.h"
+#include "graphics/proj.h"
 
 #include "engine.h"
 
@@ -144,6 +146,7 @@ static void _engine_render
                         break;
 
                 case DISPLAY_MODE_3D:
+                        projection_3d_implement(curr_map_id);
                         break;
 
                 default:
@@ -163,7 +166,7 @@ void engine_init
         bool engineok = true;
         engineok &= (SDL_Init(SDL_INIT_EVERYTHING) == 0);               // initialize SDL core subsystems
         engineok &= (IMG_Init(IMG_INIT_PNG) != 0);                      // load SDL IMG_PNG libraries
-        engineok &= (display_init("Raycast", 1024, 768, 420, 340));
+        engineok &= (display_init("Raycast", 1024, 768, 320, 240));
 
         // check if engine is ok to run
         engine_loop = (engineok) ? true : false;
@@ -177,9 +180,19 @@ void engine_init
 
         display_mode = DISPLAY_MODE_3D;
 
-        player_init(400, 600, 5, 120, 60);
+        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, 12, 120, 60);
 
         ray_init_list();
+
+        texture_init_list();
+        texture_add_to_list("wall_brick", "./resrc/textures/brick_wall.png");
+        texture_add_to_list("floor_grass", "./resrc/textures/grass.png");
+        texture_add_to_list("wall_pattern", "./resrc/textures/vinelike_pattern.png");
+        texture_add_to_list("floor_rocky", "./resrc/textures/rocky_road.png");
+        texture_add_to_list("floor_water", "./resrc/textures/water.png");
+        texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png");
+        texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png");
+        texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png");
 
 }
 
@@ -200,6 +213,7 @@ void engine_quit
         // destroy engine components and deallocate resources
         map_free_list();
         ray_free_list();
+        texture_free_list();
         display_free();
 
         // unload IMG_PNG libraries and cleans up initialized SDL core subsystems 

@@ -19,6 +19,7 @@ typedef struct {
         int     tile_height;
         bool    hit_vert_side;
         bool    bound_tile;     // checks if hit tile is a boundary tile
+        bool    back_face;
 }
 ray_hit_t;
 
@@ -32,8 +33,7 @@ ray_hit_list_t;
 
 typedef struct {
         float                   angle;
-        ray_hit_list_t          front_face_hit_results;
-        ray_hit_list_t          back_face_hit_results;
+        ray_hit_list_t          hit_results;
 }
 ray_t;
 
