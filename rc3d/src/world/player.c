@@ -10,17 +10,18 @@
 
 
 void player_init
-(const float start_x, const float start_y, const int move_speed, const int turn_speed, const int field_of_view)
+(const float start_x, const float start_y, const char *map_id, const float player_height, const int move_speed, const int turn_speed, const int field_of_view)
 {
         // -- translation -- //////////////////////////////////
 
         player.pos_x = start_x;
         player.pos_y = start_y;
-        player.pos_z = 45;
+        player.pos_z = map_get_tile_height(map_id, player.pos_x, player.pos_y) + player_height;
         player.move_dir = 1;
         player.curr_speed = 0.f;
         player.move_speed = move_speed;
         player.moving = false;
+        player.height = player_height;
 
 
         // -- rotation -- /////////////////////////////////////
@@ -42,7 +43,7 @@ bool player_update
         math_normalize_angle(&player.yaw);
 
         // move player
-        player.curr_speed += (player.moving) ? player.move_speed * delta_time * 2.f : (-player.move_speed) * delta_time * 2.f;
+        player.curr_speed += (player.moving) ? player.move_speed * delta_time * 2.5f : (-player.move_speed) * delta_time * 2.5f;
         player.curr_speed = CLAMP(player.curr_speed, 0.f, player.move_speed);
 
         float movedelta = player.move_dir * player.curr_speed;
@@ -52,10 +53,13 @@ bool player_update
 
         bool    insidebound = (player.pos_x > TILE_SIZE) && (player.pos_y > TILE_SIZE) && (player.pos_x < map->w - TILE_SIZE) && (player.pos_x < map->h - TILE_SIZE);
 
-        if (map_get_tile_height(map_id, targetx, targety) <= ((player.pos_z / 2) + map_get_tile_height(map_id, player.pos_x, player.pos_y))) {
+        if (map_get_tile_height(map_id, targetx, targety) <= ((player.height / 2) + map_get_tile_height(map_id, player.pos_x, player.pos_y))) {
                 player.pos_x = targetx;
                 player.pos_y = targety;
         }
+
+        // update player z position
+        player.pos_z = map_get_tile_height(map_id, player.pos_x, player.pos_y) + player.height;
 
         return true;
 }

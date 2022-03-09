@@ -131,6 +131,10 @@ static void _engine_update
 
         player_update(curr_map_id, delta_time);
         ray_cast_all(curr_map_id);
+
+
+        //printf("%d from %f\n", ray_list[g_screenbuf_width / 2].hit_results.size, player.pos_z);
+
 }
 
 static void _engine_render
@@ -166,7 +170,7 @@ void engine_init
         bool engineok = true;
         engineok &= (SDL_Init(SDL_INIT_EVERYTHING) == 0);               // initialize SDL core subsystems
         engineok &= (IMG_Init(IMG_INIT_PNG) != 0);                      // load SDL IMG_PNG libraries
-        engineok &= (display_init("Raycast", 1024, 768, 320, 240));
+        engineok &= (display_init("Raycast", 1024, 768, 420, 340));
 
         // check if engine is ok to run
         engine_loop = (engineok) ? true : false;
@@ -180,7 +184,7 @@ void engine_init
 
         display_mode = DISPLAY_MODE_3D;
 
-        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, 12, 120, 60);
+        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 20, 120, 60);
 
         ray_init_list();
 

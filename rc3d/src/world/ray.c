@@ -47,7 +47,7 @@ static bool _add_ray_hit_to_list
         return true;
 }
 
-static void _clear_all_hits
+static void _reset_all_hits
 (const int ray_id)
 {
         ray_list[ray_id].hit_results.size = 0;
@@ -59,7 +59,7 @@ static void _ray_cast
         map_t *map = map_get_by_id(map_id);
 
         math_normalize_angle(&ray_angle);
-        _clear_all_hits(ray_id);
+        _reset_all_hits(ray_id);
 
         ray_hit_list_t *ray_hit_list = &(ray_list[ray_id].hit_results);
 
@@ -250,4 +250,3 @@ bool ray_render_all
 
         return true;
 }
-

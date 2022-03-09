@@ -404,7 +404,7 @@ int map_get_tile_height
 (const char *map_id, const float x, const float y)
 {
         map_t *map = map_get_by_id(map_id);
-        if (!map) return -1;
+        if (!map) return 0;
 
         int col = (int)floorf(x / TILE_SIZE) % map->cols;
         int row = (int)floorf(y / TILE_SIZE) % map->rows;

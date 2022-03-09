@@ -18,6 +18,7 @@ struct {
         int     move_speed;
         float   curr_speed;
         bool    moving;
+        int     height;
 
 
         // -- rotation -- ////////////////////////////
@@ -34,7 +35,7 @@ player;
 // >>> [arg] turn_speed: enter the value in degree, not radian
 // >>> [arg] field_of_view: enter the value in degree, not radian
 void player_init
-(const float start_x, const float start_y, const int move_speed, const int turn_speed, const int field_of_view);
+(const float start_x, const float start_y, const char *map_id, const float player_height, const int move_speed, const int turn_speed, const int field_of_view);
 
 // >> moves player, updates player logic, etc.
 bool player_update

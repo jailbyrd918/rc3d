@@ -34,9 +34,6 @@ bool projection_3d_implement
         // height of the tile at player position
         int     currh = map_get_tile_height(map_id, player.pos_x, player.pos_y);
 
-        int     currz = (int)player.pos_z + currh;
-
-
         for (int x = 0; x < g_screenbuf_width; ++x) {
                 float           rayangle = ray_list[x].angle;
                 ray_hit_list_t  hitlist = ray_list[x].hit_results;
@@ -72,7 +69,7 @@ bool projection_3d_implement
                         int             currresh = (int)((currtileh / currdist) * distproj);
 
                         // hit result top and bottom row
-                        int             currbtmy = horizon + (int)(currz / (currdist / distproj));
+                        int             currbtmy = horizon + (int)(player.pos_z / (currdist / distproj));
                         int             currtopy = ((currbtmy - currresh) < umost) ? umost : (currbtmy - currresh);
 
                         // -- draw front face -- //
@@ -80,10 +77,10 @@ bool projection_3d_implement
                         if (!currbackface) {
                                 walltex = &(texture_list.data[currwalltexid]);
                                 int             currwalltexoffsetx = currhitvert ? (int)currhity % walltex->w : (int)currhitx % walltex->w;
-                                int             frontdrawy = (currbtmy > prevtopy) ? prevtopy - 1 : (currbtmy > dmost) ? dmost : currbtmy;
+                                int             frontdrawy = (currbtmy > prevtopy) ? prevtopy : currbtmy;
 
                                 if (currtopy < prevtopy) {
-                                        for (; (frontdrawy > currtopy) && (frontdrawy > umost); --frontdrawy) {
+                                        for (; (frontdrawy >= currtopy) && (frontdrawy > umost); --frontdrawy) {
                                                 int     distcurrtop = frontdrawy + currresh - horizon;
                                                 float   currwalltexscale = (float)walltex->h / currresh;
                                                 int     currwalltexoffsety = (int)(distcurrtop * currwalltexscale) % walltex->h;
@@ -97,38 +94,22 @@ bool projection_3d_implement
                                 }
                         }
 
-
-                        // -- draw back face -- //
-
+                        // -- draw top side for hit results -- //
                         else {
                                 if (currtopy < prevtopy) {
-                                        walltex = &(texture_list.data[currwalltexid]);
-                                        int             currwalltexoffsetx = currhitvert ? (int)currhity % walltex->w : (int)currhitx % walltex->w;
-                                        int             backdrawy = (currbtmy > prevtopy) ? prevtopy - 1 : (currbtmy > dmost) ? dmost : currbtmy;
-
-                                        for (; (backdrawy > currtopy) && (backdrawy > umost); --backdrawy) {
-                                                int     distcurrtop = backdrawy + currresh - horizon;
-                                                float   currwalltexscale = (float)walltex->h / currresh;
-                                                int     currwalltexoffsety = (int)(distcurrtop * currwalltexscale) % walltex->h;
-
-                                                uint32_t currestexcolor = walltex->buffer[(walltex->w * currwalltexoffsety) + currwalltexoffsetx];
-                                                screenbuf[(g_screenbuf_width * backdrawy) + x] = currestexcolor;
-                                        }
-
-
-                                        // -- draw top side for hit results -- //
-
                                         if (i > 0) {
                                                 ray_hit_t       prevres = hitlist.data[i - 1];
+                                                float           prevhitx = prevres.hitpt_x;
+                                                float           prevhity = prevres.hitpt_y;
                                                 bool            prevbackface = prevres.back_face;
 
-                                                if (currbackface && !prevbackface) {
-                                                        for (int topsidedrawy = prevtopy - 1; (topsidedrawy > currtopy) && (topsidedrawy > umost); --topsidedrawy) {
+                                                if (currbackface && !prevbackface && map_same_tile(map_id, currhitx, currhity, prevhitx, prevhity)) {
+                                                        for (int topsidedrawy = prevtopy; (topsidedrawy >= currtopy) && (topsidedrawy > umost); --topsidedrawy) {
                                                                 // distance from current draw row to horizon draw
                                                                 int     disthorizon = topsidedrawy + (currresh)-horizon;
 
                                                                 // straight distance to floor intersection
-                                                                float   distfloorstraight = (currz / (float)disthorizon) * distproj;
+                                                                float   distfloorstraight = (player.pos_z / (float)disthorizon) * distproj;
 
                                                                 // actual distance to floor intersection
                                                                 float   distflooractual = distfloorstraight / cosf(rayangle - player.yaw);
@@ -150,7 +131,12 @@ bool projection_3d_implement
                                                         }
 
                                                         // update floor drawing start row
-                                                        floorstarty = currtopy - 1;
+                                                        floorstarty = currtopy;
+                                                }
+                                                else {
+                                                        for (int topsidedrawy = prevtopy; (topsidedrawy >= currtopy) && (topsidedrawy > umost); --topsidedrawy) {
+                                                                screenbuf[(g_screenbuf_width * topsidedrawy) + x] = GET_OPAQUE_COLOR_HEX(0x00, 0x00, 0x00);
+                                                        }
                                                 }
                                         }
 
@@ -168,12 +154,12 @@ bool projection_3d_implement
                         // -- draw floor between previous hit result top and current hit result bottom -- //
 
                         if (floorstarty > floorendy) {
-                                for (int floorbackdrawy = floorstarty; floorbackdrawy > floorendy; --floorbackdrawy) {
+                                for (int floorbackdrawy = floorstarty; floorbackdrawy >= floorendy; --floorbackdrawy) {
                                         // distance from current draw row to horizon draw
                                         int     disthorizon = floorbackdrawy - horizon;
 
                                         // straight distance to floor intersection
-                                        float   distfloorstraight = (currz / (float)disthorizon) * distproj;
+                                        float   distfloorstraight = (player.pos_z / (float)disthorizon) * distproj;
 
                                         // actual distance to floor intersection
                                         float   distflooractual = distfloorstraight / cosf(rayangle - player.yaw);
@@ -210,7 +196,7 @@ bool projection_3d_implement
 
 
                         // update floor drawing start row
-                        floorstarty = prevtopy - 1;
+                        floorstarty = prevtopy;
                 }
 
 
