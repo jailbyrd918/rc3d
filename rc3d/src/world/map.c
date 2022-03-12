@@ -32,7 +32,7 @@ void map_free_list
 bool map_add_to_list
 (const char *new_map_id, const char *filename)
 {
-        if (!new_map_id || !filename || str_matched(new_map_id, "") || str_matched(filename, ""))
+        if (!new_map_id || !filename || str_empty(new_map_id) || str_empty(filename))
                 return false;
 
 
@@ -60,7 +60,7 @@ bool map_add_to_list
         // --------------------------------------------- //
 
 
-        if (str_matched(mapbuf, "")) return false;
+        if (str_empty(mapbuf)) return false;
         int curridx = -1;
 
 
@@ -365,7 +365,7 @@ bool map_render
 map_t *map_get_by_id
 (const char *map_id)
 {
-        if (!map_id || str_matched(map_id, ""))
+        if (!map_id || str_empty(map_id))
                 return NULL;
 
         for (size_t i = 0; i < map_list.size; ++i)

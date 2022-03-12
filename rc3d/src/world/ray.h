@@ -10,15 +10,13 @@
 typedef struct {
         float   hitpt_x;
         float   hitpt_y;
-
         float   dist;
 
         int     wall_tex_id;
         int     floor_tex_id;
-
         int     tile_height;
+
         bool    hit_vert_side;
-        bool    bound_tile;     // checks if hit tile is a boundary tile
         bool    back_face;
 }
 ray_hit_t;

@@ -10,6 +10,12 @@ bool str_matched
         return (str1 != NULL) && (str2 != NULL) && (strcmp(str1, str2) == 0);
 }
 
+bool str_empty
+(const char *str)
+{
+        return str_matched(str, "");
+}
+
 bool substr_exists
 (const char *str, const char *substr)
 {

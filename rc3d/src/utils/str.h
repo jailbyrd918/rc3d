@@ -11,6 +11,10 @@
 bool str_matched
 (const char *str1, const char *str2);
 
+// >> checks if the given string is empty
+bool str_empty
+(const char *str);
+
 // >> checks if the subtring exists inside the given string
 bool substr_exists
 (const char *str, const char *substr);

@@ -54,7 +54,7 @@ bool display_init
         //SDL_SetTextureBlendMode(screenbuf_texture, SDL_BLENDMODE_BLEND);        // enable pixel opacity blending
         if (!screenbuf_texture) return false;
 
- \
+ 
         return true;
 }
 
@@ -62,13 +62,15 @@ void display_free
 (void)
 {
         // destroy screen buffer texture
+        SDL_UpdateTexture(screenbuf_texture, NULL, screenbuf, sizeof(uint32_t) * g_screenbuf_width);    // naive reallocation fix for deallocation
         SDL_DestroyTexture(screenbuf_texture);
 
         // deallocate screen pixels buffer
-        screenbuf = realloc(screenbuf, sizeof(uint32_t) * (g_screenbuf_width * g_screenbuf_height));
+        screenbuf = realloc(screenbuf, sizeof(uint32_t) * (g_screenbuf_width * g_screenbuf_height));    // naive reallocation fix for deallocation
         free(screenbuf);
 
         // destroy console window and its rendering context
+        renderer = SDL_CreateRenderer(window, -1, 0);           // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> // naive reallocation fix for deallocation
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
 }

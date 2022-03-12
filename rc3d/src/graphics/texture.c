@@ -29,10 +29,10 @@ void texture_free_list
 bool texture_add_to_list
 (const char *new_texture_id, const char *filename)
 {
-        if (!new_texture_id || str_matched(new_texture_id, ""))
+        if (!new_texture_id || str_empty(new_texture_id))
                 return false;
 
-        if (!filename || str_matched(filename, ""))
+        if (!filename || str_empty(filename))
                 return false;
 
         // create new texture
@@ -129,7 +129,7 @@ bool texture_draw
 texture_t *texture_get_by_id
 (const char *texture_id)
 {
-        if (!texture_id || str_matched(texture_id, ""))
+        if (!texture_id || str_empty(texture_id))
                 return NULL;
 
         for (size_t i = 0; i < texture_list.size; ++i)

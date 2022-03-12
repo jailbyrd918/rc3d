@@ -132,9 +132,6 @@ static void _engine_update
         player_update(curr_map_id, delta_time);
         ray_cast_all(curr_map_id);
 
-
-        //printf("%d from %f\n", ray_list[g_screenbuf_width / 2].hit_results.size, player.pos_z);
-
 }
 
 static void _engine_render
@@ -150,7 +147,7 @@ static void _engine_render
                         break;
 
                 case DISPLAY_MODE_3D:
-                        projection_3d_implement(curr_map_id);
+                        projection_3d_implement(curr_map_id, true, "sky_cloudy");
                         break;
 
                 default:
@@ -179,12 +176,15 @@ void engine_init
         // -- allocate resources and initialize engine components -- //
 
         map_init_list();
-        map_add_to_list("demo", "./resrc/maps/demo.txt");
-        curr_map_id = "demo";
+        map_add_to_list("construct", "./resrc/maps/construct.txt");
+        map_add_to_list("same_h", "./resrc/maps/same_h.txt");
+        map_add_to_list("var_h", "./resrc/maps/var_h.txt");
+        map_add_to_list("mt_side", "./resrc/maps/mt_side.txt");
+        curr_map_id = "var_h";
 
         display_mode = DISPLAY_MODE_3D;
 
-        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 20, 120, 60);
+        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 12, 120, 60);
 
         ray_init_list();
 
@@ -196,6 +196,9 @@ void engine_init
         texture_add_to_list("floor_water", "./resrc/textures/water.png");
         texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png");
         texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png");
+        texture_add_to_list("concrete", "./resrc/textures/concrete.png");
+        texture_add_to_list("anim_water", "./resrc/textures/anim_water.png");
+        texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png");
         texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png");
 
 }
