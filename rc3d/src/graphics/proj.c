@@ -11,6 +11,7 @@
 #include "world/map.h"
 #include "world/player.h"
 #include "world/ray.h"
+#include "world/sprite.h"
 
 #include "proj.h"
 
@@ -76,23 +77,47 @@ bool projection_3d_implement
 
                         if (!currhitbackface) {
                                 texture_t       *walltex = &(texture_list.data[currhitwalltexid]);
-                                int             walltexoffsetx = currhitvertside ? (int)currhity % walltex->w : (int)currhitx % walltex->w;
-                                int             walldrawy = (currhitwallbtmy > drawnmosty) ? drawnmosty : currhitwallbtmy;
 
-                                if (currhitwalltopy < drawnmosty) {
-                                        // hit result wall to be drawn is not completely occluded ...
+                                if (!walltex->is_anim) {
+                                        int             walltexoffsetx = currhitvertside ? (int)currhity % walltex->w : (int)currhitx % walltex->w;
+                                        int             walldrawy = (currhitwallbtmy > drawnmosty) ? drawnmosty : currhitwallbtmy;
 
-                                        for (; (walldrawy >= currhitwalltopy) && (walldrawy > umost); --walldrawy) {
-                                                int     distwalltop = walldrawy + currhitwallh - horizon;
-                                                float   walltexscale = (float)walltex->h / (currhitwallh / ((float)currhittileh / walltex->h));
-                                                int     walltexoffsety = (int)(distwalltop * walltexscale) % walltex->h;
+                                        if (currhitwalltopy < drawnmosty) {
+                                                // hit result wall to be drawn is not completely occluded ...
 
-                                                uint32_t walltexcolor = walltex->buffer[(walltex->w * walltexoffsety) + walltexoffsetx];
-                                                screenbuf[(g_screenbuf_width * walldrawy) + x] = walltexcolor;
+                                                for (; (walldrawy >= currhitwalltopy) && (walldrawy > umost); --walldrawy) {
+                                                        int     distwalltop = walldrawy + currhitwallh - horizon;
+                                                        float   walltexscale = (float)walltex->h / (currhitwallh / ((float)currhittileh / walltex->h));
+                                                        int     walltexoffsety = (int)(distwalltop * walltexscale) % walltex->h;
+
+                                                        uint32_t walltexcolor = walltex->buffer[(walltex->w * walltexoffsety) + walltexoffsetx];
+                                                        screenbuf[(g_screenbuf_width * walldrawy) + x] = walltexcolor;
+                                                }
+
+                                                // update top most drawn row
+                                                drawnmosty = currhitwalltopy;
                                         }
+                                }
+                                else {
+                                        int             animoffsetx = (walltex->frame_w * walltex->frame_index);
+                                        int             walltexoffsetx = currhitvertside ? (int)currhity % walltex->frame_w : (int)currhitx % walltex->frame_w;
+                                        int             walldrawy = (currhitwallbtmy > drawnmosty) ? drawnmosty : currhitwallbtmy;
 
-                                        // update top most drawn row
-                                        drawnmosty = currhitwalltopy;
+                                        if (currhitwalltopy < drawnmosty) {
+                                                // hit result wall to be drawn is not completely occluded ...
+
+                                                for (; (walldrawy >= currhitwalltopy) && (walldrawy > umost); --walldrawy) {
+                                                        int     distwalltop = walldrawy + currhitwallh - horizon;
+                                                        float   walltexscale = (float)walltex->h / (currhitwallh / ((float)currhittileh / walltex->h));
+                                                        int     walltexoffsety = (int)(distwalltop * walltexscale) % walltex->h;
+
+                                                        uint32_t walltexcolor = walltex->buffer[(walltex->w * walltexoffsety) + (animoffsetx + walltexoffsetx)];
+                                                        screenbuf[(g_screenbuf_width * walldrawy) + x] = walltexcolor;
+                                                }
+
+                                                // update top most drawn row
+                                                drawnmosty = currhitwalltopy;
+                                        }
                                 }
                         }
 
@@ -128,11 +153,21 @@ bool projection_3d_implement
                                                                 if ((floorx > 0) && (floory > 0) && (floorx < map->w) && (floory < map->h)) {
                                                                         texture_t       *floortex = &(texture_list.data[currhitfloortexid]);
 
-                                                                        int             floortexoffsetx = (int)floorx % floortex->w;
-                                                                        int             floortexoffsety = (int)floory % floortex->h;
+                                                                        if (!floortex->is_anim) {
+                                                                                int             floortexoffsetx = (int)floorx % floortex->w;
+                                                                                int             floortexoffsety = (int)floory % floortex->h;
 
-                                                                        uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
-                                                                        screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
+                                                                                uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
+                                                                                screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
+                                                                        }
+                                                                        else {
+                                                                                int             animoffsetx = (floortex->frame_w * floortex->frame_index);
+                                                                                int             floortexoffsetx = (int)floorx % floortex->frame_w;
+                                                                                int             floortexoffsety = (int)floory % floortex->h;
+
+                                                                                uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + (animoffsetx + floortexoffsetx)];
+                                                                                screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
+                                                                        }
                                                                 }
                                                         }
                                                 }
@@ -144,7 +179,7 @@ bool projection_3d_implement
                                                 floorstarty = currhitwalltopy;
                                         }
 
-                                        
+
                                 }
                         }
 
@@ -175,11 +210,21 @@ bool projection_3d_implement
                                                 int             floortexid = map_get_floor_tex_id(map_id, floorx, floory) - 1;
                                                 texture_t       *floortex = &(texture_list.data[floortexid]);
 
-                                                int             floortexoffsetx = (int)floorx % floortex->w;
-                                                int             floortexoffsety = (int)floory % floortex->h;
+                                                if (!floortex->is_anim) {
+                                                        int             floortexoffsetx = (int)floorx % floortex->w;
+                                                        int             floortexoffsety = (int)floory % floortex->h;
 
-                                                uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
-                                                screenbuf[(g_screenbuf_width * floordrawy) + x] = floortexcolor;
+                                                        uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
+                                                        screenbuf[(g_screenbuf_width * floordrawy) + x] = floortexcolor;
+                                                }
+                                                else {
+                                                        int             animoffsetx = (floortex->frame_w * floortex->frame_index);
+                                                        int             floortexoffsetx = (int)floorx % floortex->frame_w;
+                                                        int             floortexoffsety = (int)floory % floortex->h;
+
+                                                        uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + (animoffsetx + floortexoffsetx)];
+                                                        screenbuf[(g_screenbuf_width * floordrawy) + x] = floortexcolor;
+                                                }
                                         }
                                 }
                         }
@@ -209,10 +254,12 @@ bool projection_3d_implement
                         }
 
 
+
                         // update floor draw start row
                         floorstarty = drawnmosty;
                 }
         }
+
 
         return true;
 }

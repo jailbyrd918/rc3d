@@ -65,7 +65,7 @@ bool player_update
 }
 
 
-bool player_render
+bool player_render_2d
 (const char *map_id)
 {
         map_t *map = map_get_by_id(map_id);

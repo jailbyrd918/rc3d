@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 
 #include "utils/str.h"
+#include "utils/maths.h"
 #include "graphics/display.h"
 
 #include "texture.h"
@@ -27,7 +28,7 @@ void texture_free_list
 
 
 bool texture_add_to_list
-(const char *new_texture_id, const char *filename)
+(const char *new_texture_id, const char *filename, const int frame_width, const int frames, const float frame_duration)
 {
         if (!new_texture_id || str_empty(new_texture_id))
                 return false;
@@ -52,7 +53,12 @@ bool texture_add_to_list
         newtex->h = surface->h;
         newtex->buffer = malloc(sizeof(uint32_t) * (surface->w * surface->h));
         memcpy(newtex->buffer, surface->pixels, sizeof(uint32_t) * (surface->w * surface->h));
-
+        newtex->frame_w = frame_width;
+        newtex->frames = frames;
+        newtex->frame_index = 0;
+        newtex->is_anim = (frames > 1);
+        newtex->frame_duration = CLAMP(frame_duration, 0.f, frame_duration);
+        newtex->frame_time = 0.f;
 
         // -- resize texture list if full -- ////////////
 
@@ -84,7 +90,7 @@ bool texture_remove_from_list
         texture_t *rmvtex = texture_get_by_id(texture_id);
         if (!rmvtex) return false;
 
-        // swap the remove texture element to the last element and decrement the size
+        // swap the impending removal texture element to the last element and decrement the size
         // making the illusion of removing the element
         for (size_t i = 0; i < texture_list.size; ++i) {
                 if (str_matched(texture_list.data[i].id, texture_id)) {
@@ -118,11 +124,38 @@ bool texture_draw
         for (int drawx = 0; drawx < tex->w; ++drawx) {
                 for (int drawy = 0; drawy < tex->h; ++drawy) {
                         uint32_t texcolor = tex->buffer[(tex->w * drawy) + drawx];
-                        display_draw_pixel(x + drawx, y + drawy, texcolor);
+
+                        if (texcolor != 0x00)
+                                display_draw_pixel(x + drawx, y + drawy, texcolor);
                 }
         }
 
         return true;
+}
+
+void texture_update_all_anims
+(const float delta_time)
+{
+        for (size_t i = 0; i < texture_list.size; ++i) {
+                if (texture_list.data[i].is_anim) {
+                        texture_t       *animtex = &(texture_list.data[i]);
+
+                        animtex->frame_time += delta_time;
+
+                        // -- frame time calculations are all measured in milliseconds -- //
+                        // when updated frame time reaches the frame duration
+                        if (animtex->frame_time >= (animtex->frame_duration)) {
+                                // reset the frame time
+                                animtex->frame_time -= (animtex->frame_duration);
+
+                                if (animtex->frame_index < (size_t)(animtex->frames - 1))
+                                        animtex->frame_index++;
+                                else
+                                        animtex->frame_index = 0;
+                        }
+                }
+        }
+
 }
 
 

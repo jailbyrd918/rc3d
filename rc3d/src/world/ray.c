@@ -12,7 +12,7 @@
 #include "ray.h"
 
 
-static int _compare_rayhits_by_distance
+static inline int _compare_rayhits_by_distance
 (const ray_hit_t *rayhit1, const ray_hit_t *rayhit2)
 {
         return (*(float *)&rayhit1->dist < *(float *)&rayhit2->dist) ? -1 : 1;
@@ -34,6 +34,7 @@ static bool _add_ray_hit_to_list
         rayhit.floor_tex_id = map_get_floor_tex_id(map_id, hitptx, hitpty);
         rayhit.tile_height = map_get_tile_height(map_id, hitptx, hitpty);
         rayhit.back_face = back_face;
+        rayhit.bound_tile = (hitptx < TILE_SIZE) || (hitpty < TILE_SIZE) || (hitptx >= map->w - TILE_SIZE) || (hitpty >= map->h - TILE_SIZE);
 
         ray_hit_list_t *hit_results = &(ray_list[ray_id].hit_results);
         if (hit_results->size >= hit_results->capacity) {
@@ -159,6 +160,14 @@ static void _ray_cast
 
         ray_hit_list_t *hit_results = &(ray_list[ray_id].hit_results);
         qsort(hit_results->data, hit_results->size, sizeof(ray_hit_t), _compare_rayhits_by_distance);
+
+        // remove all boundary type ray hits, except for the closest one
+        if (hit_results->size > 1) {
+                for (size_t i = hit_results->size - 1; i > 0; --i) {
+                        if (hit_results->data[i].bound_tile && hit_results->data[i - 1].bound_tile)
+                                --hit_results->size;
+                }
+        }
 
 }
 

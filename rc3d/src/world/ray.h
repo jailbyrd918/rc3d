@@ -18,6 +18,7 @@ typedef struct {
 
         bool    hit_vert_side;
         bool    back_face;
+        bool    bound_tile;
 }
 ray_hit_t;
 

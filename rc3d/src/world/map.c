@@ -330,7 +330,7 @@ bool map_log_info
         return true;
 }
 
-bool map_render
+bool map_render_2d
 (const char *map_id)
 {
         map_t *map = map_get_by_id(map_id);

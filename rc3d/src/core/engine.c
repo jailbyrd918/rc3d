@@ -11,6 +11,7 @@
 #include "world/map.h"
 #include "world/player.h"
 #include "world/ray.h"
+#include "world/sprite.h"
 #include "graphics/proj.h"
 
 #include "engine.h"
@@ -131,7 +132,8 @@ static void _engine_update
 
         player_update(curr_map_id, delta_time);
         ray_cast_all(curr_map_id);
-
+        texture_update_all_anims(delta_time);
+        sprite_check_visible();
 }
 
 static void _engine_render
@@ -141,9 +143,10 @@ static void _engine_render
 
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
-                        map_render(curr_map_id);
+                        map_render_2d(curr_map_id);
                         ray_render_all(curr_map_id);
-                        player_render(curr_map_id);
+                        sprite_render_2d(curr_map_id);
+                        player_render_2d(curr_map_id);
                         break;
 
                 case DISPLAY_MODE_3D:
@@ -189,17 +192,22 @@ void engine_init
         ray_init_list();
 
         texture_init_list();
-        texture_add_to_list("wall_brick", "./resrc/textures/brick_wall.png");
-        texture_add_to_list("floor_grass", "./resrc/textures/grass.png");
-        texture_add_to_list("wall_pattern", "./resrc/textures/vinelike_pattern.png");
-        texture_add_to_list("floor_rocky", "./resrc/textures/rocky_road.png");
-        texture_add_to_list("floor_water", "./resrc/textures/water.png");
-        texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png");
-        texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png");
-        texture_add_to_list("concrete", "./resrc/textures/concrete.png");
-        texture_add_to_list("anim_water", "./resrc/textures/anim_water.png");
-        texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png");
-        texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png");
+        texture_add_to_list("wall_brick", "./resrc/textures/brick_wall.png", 64, 1, 0.f);
+        texture_add_to_list("floor_grass", "./resrc/textures/grass.png", 64, 1, 0.f);
+        texture_add_to_list("wall_pattern", "./resrc/textures/vinelike_pattern.png", 64, 1, 0.f);
+        texture_add_to_list("floor_rocky", "./resrc/textures/rocky_road.png", 64, 1, 0.f);
+        texture_add_to_list("floor_water", "./resrc/textures/anim_water.png", 64, 40, .2f);
+        texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png", 64, 1, 0.f);
+        texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png", 64, 1, 0.f);
+        texture_add_to_list("concrete", "./resrc/textures/concrete.png", 64, 1, 0.f);
+        texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png", 64, 1, 0.f);
+        texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png", 64, 1, 0.f);
+        texture_add_to_list("spr_pine", "./resrc/textures/pine_tree.png", 64, 1, 0.f);
+
+        sprite_init_lists();
+        sprite_add_to_list("pine1", curr_map_id, 700, 1000, "spr_pine");
+        sprite_add_to_list("pine2", curr_map_id, 800, 800, "spr_pine");
+        sprite_add_to_list("pine3", curr_map_id, 900, 1200, "spr_pine");
 
 }
 
@@ -221,6 +229,7 @@ void engine_quit
         map_free_list();
         ray_free_list();
         texture_free_list();
+        sprite_free_lists();
         display_free();
 
         // unload IMG_PNG libraries and cleans up initialized SDL core subsystems 
