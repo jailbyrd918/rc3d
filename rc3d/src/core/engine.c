@@ -202,11 +202,13 @@ void engine_init
         texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png", 64, 1, 0.f);
         texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png", 64, 1, 0.f);
         texture_add_to_list("spr_pine", "./resrc/textures/pine_tree.png", 64, 1, 0.f);
+        texture_add_to_list("spr_rgb", "./resrc/textures/anim_rgb.png", 64, 3, .5f);
 
         sprite_init_lists();
         sprite_add_to_list("pine1", curr_map_id, 240, 225, "spr_pine");
         sprite_add_to_list("pine2", curr_map_id, 800, 800, "spr_pine");
         sprite_add_to_list("pine3", curr_map_id, 900, 1200, "spr_pine");
+        sprite_add_to_list("rgb", curr_map_id, 1200, 1000, "spr_rgb");
 
 }
 

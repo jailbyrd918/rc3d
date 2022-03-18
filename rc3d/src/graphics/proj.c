@@ -266,17 +266,17 @@ bool projection_3d_implement
                 float           currspriteangle = currsprite->angle;
 
 
-                // calculate sprite angle facing player
+                // rendering sprite angle (facing player)
                 float           spriteangle = atan2f(currsprite->pos_y - player.pos_y, currsprite->pos_x - player.pos_x) - player.yaw;
 
                 // correct sprite distance to rectify fish-eye effect
-                currspritedist = currspritedist * cosf(spriteangle);
+                currspritedist = currspritedist * cosf(currspriteangle);
 
                 // current visible sprite texture 
                 texture_t       *spritetex = texture_get_by_id(currsprite->tex_id);
 
                 // texture width and height
-                int             texw = spritetex->w;
+                int             texw = (spritetex->is_anim) ? spritetex->frame_w : spritetex->w;
                 int             texh = spritetex->h;
 
                 // projected sprite width and height in pixels
@@ -317,19 +317,39 @@ bool projection_3d_implement
                                 }
 
 
-                                int spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
+                                if (!spritetex->is_anim) {
+                                        int spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
 
-                                for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
-                                        if (spritedrawy >= umost && spritedrawy < dmost) {
-                                                int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
-                                                int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));
-                                                spritetexoffsety = CLAMP(spritetexoffsety, 0, texh - 1);
+                                        for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
+                                                if (spritedrawy >= umost && spritedrawy < dmost) {
+                                                        int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
+                                                        int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));
+                                                        spritetexoffsety = CLAMP(spritetexoffsety, 0, texh - 1);
 
-                                                uint32_t        spritetexcolor = spritetex->buffer[(texw * spritetexoffsety) + spritetexoffsetx];
+                                                        uint32_t        spritetexcolor = spritetex->buffer[(spritetex->w * spritetexoffsety) + spritetexoffsetx];
 
-                                                // draw ignoring transparent pixel
-                                                if (spritetexcolor != 0x00)
-                                                        screenbuf[(g_screenbuf_width * spritedrawy) + spritedrawx] = spritetexcolor;
+                                                        // draw ignoring transparent pixel
+                                                        if (spritetexcolor != 0x00)
+                                                                screenbuf[(g_screenbuf_width * spritedrawy) + spritedrawx] = spritetexcolor;
+                                                }
+                                        }
+                                }
+                                else {
+                                        int     animoffsetx = (spritetex->frame_w * spritetex->frame_index);
+                                        int     spritetexoffsetx = (int)((spritedrawx) * (texw / spritew)) % texw;
+
+                                        for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
+                                                if (spritedrawy >= umost && spritedrawy < dmost) {
+                                                        int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
+                                                        int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));
+                                                        spritetexoffsety = CLAMP(spritetexoffsety, 0, texh - 1);
+
+                                                        uint32_t        spritetexcolor = spritetex->buffer[(spritetex->w * spritetexoffsety) + (animoffsetx + spritetexoffsetx)];
+
+                                                        // draw ignoring transparent pixel
+                                                        if (spritetexcolor != 0x00)
+                                                                screenbuf[(g_screenbuf_width * spritedrawy) + spritedrawx] = spritetexcolor;
+                                                }
                                         }
                                 }
                         }

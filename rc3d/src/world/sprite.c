@@ -218,7 +218,7 @@ bool sprite_check_visible(void)
                 sprite_t        *currsprite = &(sprite_list.data[i]);
 
                 // get angle facing player for sprite
-                float           angle = atan2f(currsprite->pos_y - player.pos_y, currsprite->pos_x - player.pos_x) - player.yaw;
+                float           angle = player.yaw - atan2f(currsprite->pos_y - player.pos_y, currsprite->pos_x - player.pos_x);
 
                 // clipping epsilon
                 // quick fix for the sprite to not be visible when completely out of player view
