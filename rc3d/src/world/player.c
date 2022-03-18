@@ -43,7 +43,9 @@ bool player_update
         math_normalize_angle(&player.yaw);
 
         // move player
-        player.curr_speed += (player.moving) ? player.move_speed * delta_time * 2.5f : (-player.move_speed) * delta_time * 2.5f;
+        float   acceleration_rate = 4.f;
+
+        player.curr_speed += (player.moving) ? player.move_speed * delta_time * acceleration_rate : (-player.move_speed) * delta_time * acceleration_rate;
         player.curr_speed = CLAMP(player.curr_speed, 0.f, player.move_speed);
 
         float movedelta = player.move_dir * player.curr_speed;

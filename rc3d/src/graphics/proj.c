@@ -29,7 +29,7 @@ bool projection_3d_implement
         int     horizon = (g_screenbuf_height >> 1);
 
         // distance to projection plane
-        float   distproj = (float)horizon / tanf(player.fov / 2);
+        float   distproj = (g_screenbuf_width >> 1) / tanf(player.fov / 2);
 
 
         // -- iterate ray by ray -- //
@@ -47,10 +47,10 @@ bool projection_3d_implement
 
 
                 for (size_t i = 0; i < rayhits.size; ++i) {
-                        ray_hit_t       currhit = rayhits.data[i];
-
 
                         // -- current ray hit result properties -- //
+
+                        ray_hit_t       currhit = rayhits.data[i];
 
                         float           currhitdist = currhit.dist;
                         float           currhitx = currhit.hitpt_x;
@@ -125,61 +125,54 @@ bool projection_3d_implement
                         // -- draw top side floors -- //
 
                         else {
-                                if ((currhitwalltopy < drawnmosty) && (i > 0)) {
+                                if (currhitwalltopy < drawnmosty) {
                                         ray_hit_t       prevhit = rayhits.data[i - 1];
                                         bool            prevhitbackface = prevhit.back_face;
                                         float           prevhitx = prevhit.hitpt_x;
                                         float           prevhity = prevhit.hitpt_y;
 
                                         // the current hit result must be the back face and the previous hit result must be the front face of the same tile
-                                        if ((currhitbackface && !prevhitbackface) && (map_same_tile(map_id, currhitx, currhity, prevhitx, prevhity))) {
-                                                if (currhitwalltopy < drawnmosty) {
-                                                        // top side floor to be drawn is not completely occluded ...
+                                        if (currhitwalltopy < drawnmosty) {
+                                                // top side floor to be drawn is not completely occluded ...
 
-                                                        for (int topsidedrawy = drawnmosty; (topsidedrawy >= currhitwalltopy) && (topsidedrawy > umost); --topsidedrawy) {
-                                                                // distance from current draw row to horizon row
-                                                                int     disthorizon = topsidedrawy - horizon;
+                                                for (int topsidedrawy = drawnmosty; (topsidedrawy >= currhitwalltopy) && (topsidedrawy > umost); --topsidedrawy) {
+                                                        // distance from current draw row to horizon row
+                                                        int     disthorizon = topsidedrawy - horizon;
 
-                                                                // straight distance to floor intersection
-                                                                float   distfloorstraight = ((player.pos_z - currhittileh) / (float)disthorizon) * distproj;
+                                                        // straight distance to floor intersection
+                                                        float   distfloorstraight = ((player.pos_z - currhittileh) / (float)disthorizon) * distproj;
 
-                                                                // actual distance to floor intersection
-                                                                float   distflooractual = distfloorstraight / cosf(rayangle - player.yaw);
+                                                        // actual distance to floor intersection
+                                                        float   distflooractual = distfloorstraight / cosf(rayangle - player.yaw);
 
-                                                                // floor intersection (world space) 
-                                                                float   floorx = player.pos_x + cosf(rayangle) * distflooractual,
-                                                                        floory = player.pos_y + sinf(rayangle) * distflooractual;
+                                                        // floor intersection (world space) 
+                                                        float   floorx = player.pos_x + cosf(rayangle) * distflooractual,
+                                                                floory = player.pos_y + sinf(rayangle) * distflooractual;
 
-                                                                if ((floorx > 0) && (floory > 0) && (floorx < map->w) && (floory < map->h)) {
-                                                                        texture_t       *floortex = &(texture_list.data[currhitfloortexid]);
+                                                        if ((floorx > 0) && (floory > 0) && (floorx < map->w) && (floory < map->h)) {
+                                                                texture_t       *floortex = &(texture_list.data[currhitfloortexid]);
 
-                                                                        if (!floortex->is_anim) {
-                                                                                int             floortexoffsetx = (int)floorx % floortex->w;
-                                                                                int             floortexoffsety = (int)floory % floortex->h;
+                                                                if (!floortex->is_anim) {
+                                                                        int             floortexoffsetx = (int)floorx % floortex->w;
+                                                                        int             floortexoffsety = (int)floory % floortex->h;
 
-                                                                                uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
-                                                                                screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
-                                                                        }
-                                                                        else {
-                                                                                int             animoffsetx = (floortex->frame_w * floortex->frame_index);
-                                                                                int             floortexoffsetx = (int)floorx % floortex->frame_w;
-                                                                                int             floortexoffsety = (int)floory % floortex->h;
+                                                                        uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + floortexoffsetx];
+                                                                        screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
+                                                                }
+                                                                else {
+                                                                        int             animoffsetx = (floortex->frame_w * floortex->frame_index);
+                                                                        int             floortexoffsetx = (int)floorx % floortex->frame_w;
+                                                                        int             floortexoffsety = (int)floory % floortex->h;
 
-                                                                                uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + (animoffsetx + floortexoffsetx)];
-                                                                                screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
-                                                                        }
+                                                                        uint32_t        floortexcolor = floortex->buffer[(floortex->w * floortexoffsety) + (animoffsetx + floortexoffsetx)];
+                                                                        screenbuf[(g_screenbuf_width * topsidedrawy) + x] = floortexcolor;
                                                                 }
                                                         }
                                                 }
-
-                                                // update top most drawn row
-                                                drawnmosty = currhitwalltopy;
-
-                                                // update floor draw start row
-                                                floorstarty = currhitwalltopy;
                                         }
 
-
+                                        // update top most drawn row and floor draw start row
+                                        floorstarty = drawnmosty = currhitwalltopy;
                                 }
                         }
 
@@ -230,36 +223,117 @@ bool projection_3d_implement
                         }
 
 
-                        // -- draw sky / ceiling -- //
-
-                        if (toggle_sky && !str_empty(sky_tex_id)) {
-                                texture_t       *skytex = texture_get_by_id(sky_tex_id);
-
-                                if (skytex && (drawnmosty > umost)) {
-                                        for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy) {
-                                                int             skytexoffsetx = (int)floorf((rayangle * skytex->w) / (PI * 2.f)) % skytex->w;
-
-                                                uint32_t        skytexcolor = skytex->buffer[(skytex->w * skydrawy) + skytexoffsetx];
-                                                screenbuf[(g_screenbuf_width * skydrawy) + x] = skytexcolor;
-                                        }
-                                }
-                                else if (!skytex && (drawnmosty > umost)) {
-                                        for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy)
-                                                screenbuf[(g_screenbuf_width * skydrawy) + x] = GET_OPAQUE_COLOR_HEX(0x80, 0x80, 0x80);
-                                }
-                        }
-                        else {
-                                for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy)
-                                        screenbuf[(g_screenbuf_width * skydrawy) + x] = GET_OPAQUE_COLOR_HEX(0x80, 0x80, 0x80);
-                        }
-
-
-
                         // update floor draw start row
                         floorstarty = drawnmosty;
                 }
+
+
+                // -- draw sky / ceiling -- //
+
+                if (toggle_sky && !str_empty(sky_tex_id)) {
+                        texture_t       *skytex = texture_get_by_id(sky_tex_id);
+
+                        if (skytex && (drawnmosty > umost)) {
+                                for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy) {
+                                        int             skytexoffsetx = (int)floorf((rayangle * skytex->w) / (PI * 2.f)) % skytex->w;
+                                        int             skytexoffsety = skydrawy % skytex->h;
+
+                                        uint32_t        skytexcolor = skytex->buffer[(skytex->w * skytexoffsety) + skytexoffsetx];
+                                        screenbuf[(g_screenbuf_width * skydrawy) + x] = skytexcolor;
+                                }
+                        }
+                        else if (!skytex && (drawnmosty > umost)) {
+                                for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy)
+                                        screenbuf[(g_screenbuf_width * skydrawy) + x] = GET_OPAQUE_COLOR_HEX(0x80, 0x80, 0x80);
+                        }
+                }
+                else {
+                        for (int skydrawy = drawnmosty; skydrawy > umost; --skydrawy)
+                                screenbuf[(g_screenbuf_width * skydrawy) + x] = GET_OPAQUE_COLOR_HEX(0x80, 0x80, 0x80);
+                }
         }
 
+
+        // -- render sprite -- //
+
+        for (size_t i = 0; i < visible_sprite_list.size; ++i) {
+
+                // -- current visible sprite properties -- //
+
+                sprite_t        *currsprite = visible_sprite_list.sprite_refs[i];
+
+                float           currspritedist = currsprite->dist;
+                float           currspriteangle = currsprite->angle;
+
+                // calculate sprite angle facing player
+                float           spriteangle = atan2f(currsprite->pos_y - player.pos_y, currsprite->pos_x - player.pos_x) - player.yaw;
+
+                // correct sprite distance to rectify fish-eye effect
+                currspritedist = currspritedist * cosf(spriteangle);
+
+                // current visible sprite texture 
+                texture_t       *spritetex = texture_get_by_id(currsprite->tex_id);
+
+                // texture width and height
+                int             texw = spritetex->w;
+                int             texh = spritetex->h;
+
+                // projected sprite width and height in pixels
+                float           spritew = ((float)texw / currspritedist) * distproj;
+                float           spriteh = ((float)texh / currspritedist) * distproj;
+
+                // sprite left-most and right-most column
+                float           spritex = tanf(spriteangle) * distproj;
+                int             spritelmost = (int)(spritex + (g_screenbuf_width >> 1) - (spritew / 2));
+                int             spritermost = (int)(spritelmost + spritew);
+
+                // sprite top and bottom row
+                int             spritebtmy = (int)(horizon + ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)));
+                int             spritetopy = ((int)(spritebtmy - spriteh) < umost) ? umost : (int)(spritebtmy - spriteh);
+
+
+                for (int spritedrawx = spritelmost; spritedrawx < spritermost; ++spritedrawx) {
+                        if (spritedrawx >= 0 && spritedrawx < g_screenbuf_width) {
+                                float           rayangle = ray_list[spritedrawx].angle;
+                                ray_hit_list_t  rayhits = ray_list[spritedrawx].hit_results;
+
+
+                                // -- check for possible occlusion -- //
+
+                                // index for closest wall in front of the sprite
+                                int             distrayhitidx = -1;
+                                for (int idx = 0; ((size_t)idx < rayhits.size) && (rayhits.data[idx].dist < currspritedist); distrayhitidx = idx++);
+
+                                // determine sprite start drawing row (remove any occluded part)
+                                for (int idx = 0; idx <= distrayhitidx; ++idx) {
+                                        ray_hit_t       rayhit = rayhits.data[idx];
+                                        float           rayhitdist = rayhit.dist * cosf(rayangle - player.yaw);
+                                        int             rayhitwallh = (int)((rayhit.tile_height / rayhitdist) * distproj);
+                                        int             rayhitwallbtmy = horizon + (int)(player.pos_z / (rayhitdist / distproj));
+                                        int             rayhitwalltopy = ((rayhitwallbtmy - rayhitwallh) < umost) ? umost : (rayhitwallbtmy - rayhitwallh);
+
+                                        spritebtmy = (rayhitwalltopy <= spritebtmy) ? rayhitwalltopy : spritebtmy;
+                                }
+
+
+                                int spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
+
+                                for (int spritedrawy = spritebtmy; spritedrawy >= spritetopy; --spritedrawy) {
+                                        if (spritedrawy >= umost && spritedrawy < dmost) {
+                                                int             distspritetop = (int)(spritedrawy + fabsf((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
+                                                int             spritetexoffsety = (int)(distspritetop * (texh / (spriteh)));
+                                                spritetexoffsety = CLAMP(spritetexoffsety, 0, texh - 1);
+
+                                                uint32_t        spritetexcolor = spritetex->buffer[(texw * spritetexoffsety) + spritetexoffsetx];
+
+                                                // draw ignoring transparent pixel
+                                                if (spritetexcolor != 0x00)
+                                                        screenbuf[(g_screenbuf_width * spritedrawy) + spritedrawx] = spritetexcolor;
+                                        }
+                                }
+                        }
+                }
+        }
 
         return true;
 }

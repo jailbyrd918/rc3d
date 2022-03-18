@@ -179,11 +179,8 @@ void engine_init
         // -- allocate resources and initialize engine components -- //
 
         map_init_list();
-        map_add_to_list("construct", "./resrc/maps/construct.txt");
-        map_add_to_list("same_h", "./resrc/maps/same_h.txt");
-        map_add_to_list("var_h", "./resrc/maps/var_h.txt");
-        map_add_to_list("mt_side", "./resrc/maps/mt_side.txt");
-        curr_map_id = "var_h";
+        map_add_to_list("demo", "./resrc/maps/rc3dm_demo.txt");
+        curr_map_id = "demo";
 
         display_mode = DISPLAY_MODE_3D;
 
@@ -193,19 +190,21 @@ void engine_init
 
         texture_init_list();
         texture_add_to_list("wall_brick", "./resrc/textures/brick_wall.png", 64, 1, 0.f);
+        texture_add_to_list("concrete", "./resrc/textures/concrete.png", 64, 1, 0.f);
+        texture_add_to_list("wall_hedge", "./resrc/textures/hedge.png", 64, 1, 0.f);
         texture_add_to_list("floor_grass", "./resrc/textures/grass.png", 64, 1, 0.f);
+        texture_add_to_list("floor_water", "./resrc/textures/anim_water.png", 64, 40, .2f);
+        texture_add_to_list("red_brick", "./resrc/textures/red_brick.png", 64, 1, 0.f);
         texture_add_to_list("wall_pattern", "./resrc/textures/vinelike_pattern.png", 64, 1, 0.f);
         texture_add_to_list("floor_rocky", "./resrc/textures/rocky_road.png", 64, 1, 0.f);
-        texture_add_to_list("floor_water", "./resrc/textures/anim_water.png", 64, 40, .2f);
         texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png", 64, 1, 0.f);
         texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png", 64, 1, 0.f);
-        texture_add_to_list("concrete", "./resrc/textures/concrete.png", 64, 1, 0.f);
         texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png", 64, 1, 0.f);
         texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png", 64, 1, 0.f);
         texture_add_to_list("spr_pine", "./resrc/textures/pine_tree.png", 64, 1, 0.f);
 
         sprite_init_lists();
-        sprite_add_to_list("pine1", curr_map_id, 700, 1000, "spr_pine");
+        sprite_add_to_list("pine1", curr_map_id, 240, 225, "spr_pine");
         sprite_add_to_list("pine2", curr_map_id, 800, 800, "spr_pine");
         sprite_add_to_list("pine3", curr_map_id, 900, 1200, "spr_pine");
 

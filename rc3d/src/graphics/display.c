@@ -51,10 +51,8 @@ bool display_init
 
         // create screen buffer texture
         screenbuf_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, scrbuf_w, scrbuf_h);
-        //SDL_SetTextureBlendMode(screenbuf_texture, SDL_BLENDMODE_BLEND);        // enable pixel opacity blending
         if (!screenbuf_texture) return false;
 
- 
         return true;
 }
 

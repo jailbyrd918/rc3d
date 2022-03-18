@@ -57,11 +57,13 @@ static void _reset_all_hits
 static void _ray_cast
 (const char *map_id, const int ray_id, float ray_angle)
 {
-        map_t *map = map_get_by_id(map_id);
+        map_t   *map = map_get_by_id(map_id);
+
+        float   playerz = player.pos_z;
+        float   maxz = playerz;
 
         math_normalize_angle(&ray_angle);
         _reset_all_hits(ray_id);
-
 
         // -- ray needs to know which direction the player is facing -- //
 
@@ -103,6 +105,7 @@ static void _ray_cast
                 if (map_get_tile_height(map_id, h_hitptx, h_hitpty - (facingup ? 0.f : 0.0005f)) > 0)
                         _add_ray_hit_to_list(map_id, ray_id, ray_angle, h_hitptx, h_hitpty - (facingup ? 0.f : 0.0005f), false, true);
 
+                
                 if ((h_hitptx < TILE_SIZE) || (h_hitpty < TILE_SIZE) || (h_hitptx >= map->w - TILE_SIZE) || (h_hitpty >= map->h - TILE_SIZE))
                         break;
 
@@ -143,6 +146,7 @@ static void _ray_cast
                 if (map_get_tile_height(map_id, v_hitptx - (facingleft ? 0.f : 0.0005f), v_hitpty) > 0)
                         _add_ray_hit_to_list(map_id, ray_id, ray_angle, v_hitptx - (facingleft ? 0.f : 0.0005f), v_hitpty, true, true);
 
+                
                 if ((v_hitptx < TILE_SIZE) || (v_hitpty < TILE_SIZE) || (v_hitptx >= map->w - TILE_SIZE) || (v_hitpty >= map->h - TILE_SIZE))
                         break;
 
