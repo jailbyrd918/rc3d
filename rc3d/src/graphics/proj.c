@@ -86,9 +86,9 @@ bool projection_3d_implement
                                                 // hit result wall to be drawn is not completely occluded ...
 
                                                 for (; (walldrawy >= currhitwalltopy) && (walldrawy > umost); --walldrawy) {
-                                                        int     distwalltop = walldrawy + currhitwallh - horizon;
+                                                        int     distscrbuftop = walldrawy + currhitwallh - horizon;
                                                         float   walltexscale = (float)walltex->h / (currhitwallh / ((float)currhittileh / walltex->h));
-                                                        int     walltexoffsety = (int)(distwalltop * walltexscale) % walltex->h;
+                                                        int     walltexoffsety = (int)(distscrbuftop * walltexscale) % walltex->h;
 
                                                         uint32_t walltexcolor = walltex->buffer[(walltex->w * walltexoffsety) + walltexoffsetx];
                                                         screenbuf[(g_screenbuf_width * walldrawy) + x] = walltexcolor;
@@ -107,9 +107,9 @@ bool projection_3d_implement
                                                 // hit result wall to be drawn is not completely occluded ...
 
                                                 for (; (walldrawy >= currhitwalltopy) && (walldrawy > umost); --walldrawy) {
-                                                        int     distwalltop = walldrawy + currhitwallh - horizon;
+                                                        int     distscrbuftop = walldrawy + currhitwallh - horizon;
                                                         float   walltexscale = (float)walltex->h / (currhitwallh / ((float)currhittileh / walltex->h));
-                                                        int     walltexoffsety = (int)(distwalltop * walltexscale) % walltex->h;
+                                                        int     walltexoffsety = (int)(distscrbuftop * walltexscale) % walltex->h;
 
                                                         uint32_t walltexcolor = walltex->buffer[(walltex->w * walltexoffsety) + (animoffsetx + walltexoffsetx)];
                                                         screenbuf[(g_screenbuf_width * walldrawy) + x] = walltexcolor;
@@ -254,7 +254,7 @@ bool projection_3d_implement
         }
 
 
-        // -- render sprite -- //
+        // -- draw sprites -- //
 
         for (size_t i = 0; i < visible_sprite_list.size; ++i) {
 
@@ -264,6 +264,7 @@ bool projection_3d_implement
 
                 float           currspritedist = currsprite->dist;
                 float           currspriteangle = currsprite->angle;
+
 
                 // calculate sprite angle facing player
                 float           spriteangle = atan2f(currsprite->pos_y - player.pos_y, currsprite->pos_x - player.pos_x) - player.yaw;
@@ -318,10 +319,10 @@ bool projection_3d_implement
 
                                 int spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
 
-                                for (int spritedrawy = spritebtmy; spritedrawy >= spritetopy; --spritedrawy) {
+                                for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
                                         if (spritedrawy >= umost && spritedrawy < dmost) {
-                                                int             distspritetop = (int)(spritedrawy + fabsf((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
-                                                int             spritetexoffsety = (int)(distspritetop * (texh / (spriteh)));
+                                                int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
+                                                int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));
                                                 spritetexoffsety = CLAMP(spritetexoffsety, 0, texh - 1);
 
                                                 uint32_t        spritetexcolor = spritetex->buffer[(texw * spritetexoffsety) + spritetexoffsetx];

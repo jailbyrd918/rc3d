@@ -184,7 +184,7 @@ void engine_init
 
         display_mode = DISPLAY_MODE_3D;
 
-        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 12, 120, 60);
+        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 12, 90, 60);
 
         ray_init_list();
 
