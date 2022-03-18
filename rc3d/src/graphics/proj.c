@@ -291,15 +291,18 @@ bool projection_3d_implement
                 // sprite top and bottom row
                 int             spritebtmy = (int)(horizon + ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)));
                 int             spritetopy = ((int)(spritebtmy - spriteh) < umost) ? umost : (int)(spritebtmy - spriteh);
-
-
+                                
                 for (int spritedrawx = spritelmost; spritedrawx < spritermost; ++spritedrawx) {
                         if (spritedrawx >= 0 && spritedrawx < g_screenbuf_width) {
+
                                 float           rayangle = ray_list[spritedrawx].angle;
                                 ray_hit_list_t  rayhits = ray_list[spritedrawx].hit_results;
 
-
+                                
                                 // -- check for possible occlusion -- //
+
+                                // sprite draw limit bottom row
+                                int             spritedrawlimity = spritebtmy;
 
                                 // index for closest wall in front of the sprite
                                 int             distrayhitidx = -1;
@@ -313,14 +316,14 @@ bool projection_3d_implement
                                         int             rayhitwallbtmy = horizon + (int)(player.pos_z / (rayhitdist / distproj));
                                         int             rayhitwalltopy = ((rayhitwallbtmy - rayhitwallh) < umost) ? umost : (rayhitwallbtmy - rayhitwallh);
 
-                                        spritebtmy = (rayhitwalltopy <= spritebtmy) ? rayhitwalltopy : spritebtmy;
+                                        spritedrawlimity = (rayhitwalltopy <= spritedrawlimity) ? rayhitwalltopy : spritedrawlimity;
                                 }
 
 
                                 if (!spritetex->is_anim) {
                                         int spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
 
-                                        for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
+                                        for (int spritedrawy = spritetopy; spritedrawy <= spritedrawlimity; ++spritedrawy) {
                                                 if (spritedrawy >= umost && spritedrawy < dmost) {
                                                         int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
                                                         int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));
@@ -338,7 +341,7 @@ bool projection_3d_implement
                                         int     animoffsetx = (spritetex->frame_w * spritetex->frame_index);
                                         int     spritetexoffsetx = (int)((spritedrawx) * (texw / spritew)) % texw;
 
-                                        for (int spritedrawy = spritetopy; spritedrawy <= spritebtmy; ++spritedrawy) {
+                                        for (int spritedrawy = spritetopy; spritedrawy <= spritedrawlimity; ++spritedrawy) {
                                                 if (spritedrawy >= umost && spritedrawy < dmost) {
                                                         int             distscrbuftop = (int)((spritedrawy + spriteh) - ((player.pos_z - currsprite->pos_z) / (currspritedist / distproj)) - horizon);
                                                         int             spritetexoffsety = (int)(distscrbuftop * (texh / spriteh));

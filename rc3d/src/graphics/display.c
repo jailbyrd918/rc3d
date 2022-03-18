@@ -39,7 +39,7 @@ bool display_init
         SDL_GetWindowSize(window, &g_window_width, &g_window_height);
 
         // create window rendering context
-        renderer = SDL_CreateRenderer(window, -1, 0);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
         if (!renderer) return false;
 
         // allocate screen pixels buffer

@@ -89,9 +89,9 @@ static bool _sprite_remove_visible_from_list
                         else {
                                 sprite_t **lastspriteref = &(visible_sprite_list.sprite_refs[visible_sprite_list.size - 1]);
                                 sprite_t **tempref = malloc(sizeof(sprite_t *));
-                                memmove(tempref, rmvspriteref, sizeof(sprite_t *));
-                                memmove(rmvspriteref, lastspriteref, sizeof(sprite_t *));
-                                memmove(lastspriteref, tempref, sizeof(sprite_t *));
+                                memcpy(tempref, rmvspriteref, sizeof(sprite_t *));
+                                memcpy(rmvspriteref, lastspriteref, sizeof(sprite_t *));
+                                memcpy(lastspriteref, tempref, sizeof(sprite_t *));
 
                                 free(tempref);
                                 --visible_sprite_list.size;
