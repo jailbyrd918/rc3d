@@ -15,7 +15,9 @@
 #include "sprite.h"
 
 
-static inline int _compare_sprites_by_distance(const void *sprite1, const void *sprite2) {
+static inline int _compare_sprites_by_distance
+(const void *sprite1, const void *sprite2) 
+{
         return ((*(sprite_t **)sprite2)->dist < (*(sprite_t **)sprite1)->dist) ? -1 : 1;
 }
 
@@ -209,7 +211,8 @@ bool sprite_remove_from_list
 }
 
 
-bool sprite_check_visible(void)
+bool sprite_check_visible
+(void)
 {
         if (sprite_list.size == 0)
                 return false;
@@ -249,7 +252,7 @@ bool sprite_check_visible(void)
         return true;
 }
 
-bool sprite_render_2d
+bool sprite_draw_2d
 (const char *map_id)
 {
         if (sprite_list.size == 0)

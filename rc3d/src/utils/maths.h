@@ -17,10 +17,10 @@
 #define RAD_TO_DEG(radian)              ((radian * 180) / PI)
 
 // >> returns the greater value of both
-#define MAX(val1, val2)                 ((val1 >= val2) ? val1 : val2)
+#define MAX(val1, val2)                 ((val1 > val2) ? val1 : val2)
 
 // >> returns the smaller value of both
-#define MIN(val1, val2)                 ((val1 <= val2) ? val1 : val2)
+#define MIN(val1, val2)                 ((val1 < val2) ? val1 : val2)
 
 // >> restricts the given value to between min value and max value
 #define CLAMP(val, min_val, max_val)    (MIN(MAX(val, min_val), max_val))

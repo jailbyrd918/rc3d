@@ -49,7 +49,7 @@ void ray_free_list
 bool ray_cast_all
 (const char *map_id);
 
-bool ray_render_all
+bool ray_draw_all
 (const char *map_id);
 
 

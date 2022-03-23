@@ -41,7 +41,7 @@ void player_init
 bool player_update
 (const char *map_id, const float delta_time);
 
-bool player_render_2d
+bool player_draw_2d
 (const char *map_id);
 
 

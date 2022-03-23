@@ -216,7 +216,7 @@ bool ray_cast_all
         return true;
 }
 
-bool ray_render_all
+bool ray_draw_all
 (const char *map_id)
 {
         map_t *map = map_get_by_id(map_id);

@@ -1,7 +1,7 @@
 # rc3d
 
 ## Description:
-An implementation of 3D graphics engine utilizing raycasting techniques
+An implementation of 3D graphics renderer utilizing raycasting techniques
 
 ## Screenshots:
 ![scrsht1](https://user-images.githubusercontent.com/100792435/157309498-652a4928-7b2f-4abf-9aab-a6bfece8f276.png)

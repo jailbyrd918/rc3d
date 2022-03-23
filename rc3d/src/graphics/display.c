@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 
+#include "utils/maths.h"
+
 #include "display.h"
 
 
@@ -90,21 +92,10 @@ bool display_draw_pixel
 (const int x, const int y, const uint32_t color)
 {
         if (!screenbuf) return false;
-        if (x < 0 || x > g_screenbuf_width || y < 0 || y > g_screenbuf_width)
+        if (x < 0 || x > g_screenbuf_width || y < 0 || y > g_screenbuf_height)
                 return false;
 
         screenbuf[(g_screenbuf_width * y) + x] = color;
-
-        return true;
-}
-
-bool display_draw_vert
-(const int x, const int y0, const int y1, const uint32_t color)
-{
-        if (!screenbuf) return false;
-
-        for (int y = y0; y < y1; ++y)
-                screenbuf[(g_screenbuf_width * y) + x] = color;
 
         return true;
 }
@@ -113,9 +104,6 @@ bool display_draw_line
 (const float x0, const float y0, const float x1, const float y1, const uint32_t color)
 {
         if (!screenbuf) return false;
-        if (x0 < 0 || y0 < 0 || x1 < 0 || y1 < 0) return false;
-        if (x0 > g_screenbuf_width || y0 > g_screenbuf_height || x1 > g_screenbuf_width || y1 > g_screenbuf_height)
-                return false;
 
         // line delta x and y
         float   dx = x1 - x0,
@@ -134,9 +122,7 @@ bool display_draw_line
 
         // draw pixel and increment towards end point (x1, y1)
         for (int i = 0; i < (int)largeside; ++i) {
-                if (!display_draw_pixel((int)roundf(drawx), (int)roundf(drawy), color))
-                        return false;
-
+                display_draw_pixel((int)roundf(drawx), (int)roundf(drawy), color);
                 drawx += xstep, drawy += ystep;
         }
 
@@ -147,8 +133,6 @@ bool display_draw_rect
 (const int x, const int y, const int w, const int h, const uint32_t color)
 {
         if (!screenbuf) return false;
-        if (x < 0 || y < 0 || x > g_screenbuf_width || y > g_screenbuf_height)
-                return false;
 
         for (int currx = x; currx < x + w; ++currx)
                 for (int curry = y; curry < y + h; ++curry)
@@ -161,8 +145,6 @@ bool display_draw_rect_f
 (const float x, const float y, const float w, const float h, const uint32_t color)
 {
         if (!screenbuf) return false;
-        if (x < 0.f || y < 0.f || x >(float)g_screenbuf_width || y >(float)g_screenbuf_height)
-                return false;
 
         for (float currx = x; currx < x + w; ++currx)
                 for (float curry = y; curry < y + h; ++curry)

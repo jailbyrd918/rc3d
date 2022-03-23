@@ -48,9 +48,6 @@ bool display_clear_screenbuf
 bool display_draw_pixel
 (const int x, const int y, const uint32_t color);
 
-bool display_draw_vert
-(const int x, const int y0, const int y1, const uint32_t color);
-
 bool display_draw_line
 (const float x0, const float y0, const float x1, const float y1, const uint32_t color);
 

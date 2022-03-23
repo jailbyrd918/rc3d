@@ -55,7 +55,7 @@ bool sprite_remove_from_list
 bool sprite_check_visible
 (void);
 
-bool sprite_render_2d
+bool sprite_draw_2d
 (const char *map_id);
 
 

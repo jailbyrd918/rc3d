@@ -48,16 +48,20 @@ static void _update_delta_time
         old_ticked = SDL_GetTicks();
 }
 
+
+
 static void _engine_proc_input
-(void) 
+(void)
 {
         SDL_Event event;
         SDL_PollEvent(&event);
 
         switch (event.type) {
+
                 case SDL_QUIT:
                         engine_loop = false;
                         break;
+
 
                 case SDL_KEYDOWN:
                         switch (event.key.keysym.sym) {
@@ -103,6 +107,7 @@ static void _engine_proc_input
                         }
                         break;
 
+
                 case SDL_KEYUP:
                         switch (event.key.keysym.sym) {
                                 case SDLK_UP:
@@ -120,8 +125,10 @@ static void _engine_proc_input
                         }
                         break;
 
+
                 default:
                         break;
+
         }
 }
 
@@ -134,6 +141,7 @@ static void _engine_update
         ray_cast_all(curr_map_id);
         texture_update_all_anims(delta_time);
         sprite_check_visible();
+
 }
 
 static void _engine_render
@@ -143,10 +151,10 @@ static void _engine_render
 
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
-                        map_render_2d(curr_map_id);
-                        ray_render_all(curr_map_id);
-                        sprite_render_2d(curr_map_id);
-                        player_render_2d(curr_map_id);
+                        map_draw_2d(curr_map_id);
+                        ray_draw_all(curr_map_id);
+                        player_draw_2d(curr_map_id);
+                        sprite_draw_2d(curr_map_id);
                         break;
 
                 case DISPLAY_MODE_3D:
@@ -170,7 +178,7 @@ void engine_init
         bool engineok = true;
         engineok &= (SDL_Init(SDL_INIT_EVERYTHING) == 0);               // initialize SDL core subsystems
         engineok &= (IMG_Init(IMG_INIT_PNG) != 0);                      // load SDL IMG_PNG libraries
-        engineok &= (display_init("Raycast", 1024, 768, 420, 340));
+        engineok &= (display_init("rc3d_demo", 1024, 768, 420, 340));
 
         // check if engine is ok to run
         engine_loop = (engineok) ? true : false;
@@ -180,35 +188,56 @@ void engine_init
 
         map_init_list();
         map_add_to_list("demo", "./resrc/maps/rc3dm_demo.txt");
-        curr_map_id = "demo";
+        map_add_to_list("park", "./resrc/maps/rc3dm_park.txt");
+        curr_map_id = "park";
 
         display_mode = DISPLAY_MODE_3D;
 
-        player_init(28 * TILE_SIZE, 20 * TILE_SIZE, curr_map_id, 45, 15, 150, 60);
+        player_init(30 * TILE_SIZE, 30 * TILE_SIZE, curr_map_id, 45, 20, 120, 60);
 
         ray_init_list();
 
         texture_init_list();
         texture_add_to_list("wall_brick", "./resrc/textures/brick_wall.png", 64, 1, 0.f);
-        texture_add_to_list("concrete", "./resrc/textures/concrete.png", 64, 1, 0.f);
+        texture_add_to_list("wall_brick_2", "./resrc/textures/brick_wall_2.png", 64, 1, 0.f);
         texture_add_to_list("wall_hedge", "./resrc/textures/hedge.png", 64, 1, 0.f);
         texture_add_to_list("floor_grass", "./resrc/textures/grass.png", 64, 1, 0.f);
-        texture_add_to_list("floor_water", "./resrc/textures/anim_water.png", 64, 40, .2f);
+        texture_add_to_list("floor_water", "./resrc/textures/anim_water.png", 64, 32, .2f);
         texture_add_to_list("red_brick", "./resrc/textures/red_brick.png", 64, 1, 0.f);
+        texture_add_to_list("wall_waterfall", "./resrc/textures/anim_waterfall.png", 64, 16, .1f);
         texture_add_to_list("wall_pattern", "./resrc/textures/vinelike_pattern.png", 64, 1, 0.f);
+        texture_add_to_list("floor_concrete", "./resrc/textures/concrete.png", 64, 1, 0.f);
         texture_add_to_list("floor_rocky", "./resrc/textures/rocky_road.png", 64, 1, 0.f);
         texture_add_to_list("floor_wood_v", "./resrc/textures/wooden_floor_v.png", 64, 1, 0.f);
         texture_add_to_list("floor_wood_h", "./resrc/textures/wooden_floor_h.png", 64, 1, 0.f);
         texture_add_to_list("sky_cloudy", "./resrc/textures/cloudy_sky.png", 64, 1, 0.f);
         texture_add_to_list("sky_nightcity", "./resrc/textures/night_city_sky.png", 64, 1, 0.f);
+        texture_add_to_list("spr_tree_1", "./resrc/textures/anim_tree_1.png", 150, 12, 0.2f);
+        texture_add_to_list("spr_tree_2", "./resrc/textures/anim_tree_2.png", 200, 20, 0.2f);
         texture_add_to_list("spr_pine", "./resrc/textures/pine_tree.png", 64, 1, 0.f);
         texture_add_to_list("spr_rgb", "./resrc/textures/anim_rgb.png", 64, 3, .5f);
 
         sprite_init_lists();
-        sprite_add_to_list("pine1", curr_map_id, 240, 225, "spr_pine");
-        sprite_add_to_list("pine2", curr_map_id, 800, 800, "spr_pine");
-        sprite_add_to_list("pine3", curr_map_id, 900, 1200, "spr_pine");
-        sprite_add_to_list("rgb", curr_map_id, 1200, 1000, "spr_rgb");
+        sprite_add_to_list("pine1", curr_map_id, 512, 1024, "spr_pine");
+        sprite_add_to_list("pine2", curr_map_id, 512, 1536, "spr_pine");
+        sprite_add_to_list("pine3", curr_map_id, 1920, 1024, "spr_pine");
+        sprite_add_to_list("pine4", curr_map_id, 960, 576, "spr_pine");
+        sprite_add_to_list("pine5", curr_map_id, 1472, 576, "spr_pine");
+        sprite_add_to_list("pine6", curr_map_id, 1920, 1536, "spr_pine");
+        sprite_add_to_list("pine7", curr_map_id, 1472, 1984, "spr_pine");
+        sprite_add_to_list("pine8", curr_map_id, 960, 1984, "spr_pine");
+        sprite_add_to_list("tree1_1", curr_map_id, 512, 1728, "spr_tree_1");
+        sprite_add_to_list("tree1_2", curr_map_id, 512, 832, "spr_tree_1");
+        sprite_add_to_list("tree1_3", curr_map_id, 768, 576, "spr_tree_1");
+        sprite_add_to_list("tree1_4", curr_map_id, 1664, 576, "spr_tree_1");
+        sprite_add_to_list("tree1_5", curr_map_id, 1920, 832, "spr_tree_1");
+        sprite_add_to_list("tree1_6", curr_map_id, 1920, 1792, "spr_tree_1");
+        sprite_add_to_list("tree1_7", curr_map_id, 1664, 1984, "spr_tree_1");
+        sprite_add_to_list("tree1_8", curr_map_id, 768, 1984, "spr_tree_1");
+        sprite_add_to_list("tree2_1", curr_map_id, 512, 1984, "spr_tree_2");
+        sprite_add_to_list("tree2_2", curr_map_id, 512, 576, "spr_tree_2");
+        sprite_add_to_list("tree2_3", curr_map_id, 1920, 1984, "spr_tree_2");
+        sprite_add_to_list("tree2_4", curr_map_id, 1920, 576, "spr_tree_2");
 
 }
 

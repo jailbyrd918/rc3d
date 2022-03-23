@@ -16,17 +16,17 @@ void player_init
 
         player.pos_x = start_x;
         player.pos_y = start_y;
-        player.pos_z = map_get_tile_height(map_id, player.pos_x, player.pos_y) + player_height;
+        player.pos_z = (float)map_get_tile_height(map_id, player.pos_x, player.pos_y) + player_height;
         player.move_dir = 1;
         player.curr_speed = 0.f;
         player.move_speed = move_speed;
         player.moving = false;
-        player.height = player_height;
+        player.height = (int)player_height;
 
 
         // -- rotation -- /////////////////////////////////////
 
-        player.yaw = math_angle_from_vec2(.5f, 1.f);
+        player.yaw = math_angle_from_vec2(0.f, -1.f);
         player.yaw_dir = 0;
         player.yaw_speed = (int)DEG_TO_RAD(turn_speed);
         player.fov = DEG_TO_RAD(field_of_view);
@@ -61,13 +61,13 @@ bool player_update
         }
 
         // update player z position
-        player.pos_z = map_get_tile_height(map_id, player.pos_x, player.pos_y) + player.height;
+        player.pos_z = (float)map_get_tile_height(map_id, player.pos_x, player.pos_y) + player.height;
 
         return true;
 }
 
 
-bool player_render_2d
+bool player_draw_2d
 (const char *map_id)
 {
         map_t *map = map_get_by_id(map_id);

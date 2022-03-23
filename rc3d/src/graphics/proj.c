@@ -339,7 +339,7 @@ bool projection_3d_implement
                                 }
                                 else {
                                         int     animoffsetx = (spritetex->frame_w * spritetex->frame_index);
-                                        int     spritetexoffsetx = (int)((spritedrawx) * (texw / spritew)) % texw;
+                                        int     spritetexoffsetx = (int)((spritedrawx - spritelmost) * (texw / spritew)) % texw;
 
                                         for (int spritedrawy = spritetopy; spritedrawy <= spritedrawlimity; ++spritedrawy) {
                                                 if (spritedrawy >= umost && spritedrawy < dmost) {

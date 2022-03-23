@@ -52,7 +52,7 @@ bool map_remove_from_list
 bool map_log_info
 (const char *map_id);
 
-bool map_render_2d
+bool map_draw_2d
 (const char *map_id);
 
 
