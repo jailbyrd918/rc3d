@@ -147,7 +147,7 @@ static void _engine_update
 static void _engine_render
 (void)
 {
-        display_clear_screenbuf(GET_OPAQUE_COLOR_HEX(0x3a, 0x3b, 0x3c));
+        //display_clear_screenbuf(GET_OPAQUE_COLOR_HEX(0x3a, 0x3b, 0x3c));
 
         switch (display_mode) {
                 case DISPLAY_MODE_2D:
